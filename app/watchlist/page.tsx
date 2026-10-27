@@ -1,10 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { CityCard } from "@/components/CityCard";
+import { DailyBrief } from "@/components/DailyBrief";
 import { RetryButton } from "@/components/RetryButton";
 import { StateMessage } from "@/components/StateMessage";
+import { UnitToggle } from "@/components/Units";
 import { primaryButton } from "@/components/buttons";
-import { getCurrentWeather, type CurrentWeather } from "@/lib/open-meteo";
+import { getForecasts, type CityForecast } from "@/lib/open-meteo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function WatchlistPage() {
@@ -36,9 +38,9 @@ export default async function WatchlistPage() {
       </StateMessage>
     );
   } else {
-    let weather: CurrentWeather[] | null = null;
+    let weather: CityForecast[] | null = null;
     try {
-      weather = await getCurrentWeather(cities.map(({ latitude, longitude }) => ({ latitude, longitude })));
+      weather = await getForecasts(cities.map(({ latitude, longitude }) => ({ latitude, longitude })));
     } catch {
       // Shown below as the API-down state; saved cities still render and can be removed.
     }
@@ -49,6 +51,9 @@ export default async function WatchlistPage() {
           <StateMessage tone="error" icon="🌩️" title="Weather service is down" action={<RetryButton />}>
             We couldn&apos;t reach Open-Meteo for current conditions. Your saved cities are safe.
           </StateMessage>
+        )}
+        {weather && (
+          <DailyBrief cities={cities.map((city, i) => ({ id: city.id, name: city.name, weather: weather[i] }))} />
         )}
         <ul className="space-y-3">
           {cities.map((city, i) => (
@@ -63,9 +68,12 @@ export default async function WatchlistPage() {
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Your watchlist</h1>
-        <Link href="/search" className="text-sm font-medium text-sky-600 hover:underline dark:text-sky-400">
-          + Add city
-        </Link>
+        <div className="flex items-center gap-3">
+          <UnitToggle />
+          <Link href="/search" className="text-sm font-medium text-sky-600 hover:underline dark:text-sky-400">
+            + Add city
+          </Link>
+        </div>
       </div>
       {content}
     </main>

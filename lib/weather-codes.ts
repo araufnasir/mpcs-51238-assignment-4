@@ -34,3 +34,23 @@ export function describeWeather(code: number, isDay: boolean) {
   const [label, dayIcon, nightIcon] = CODES[code] ?? ["Unknown", "🌡️"];
   return { label, icon: isDay ? dayIcon : (nightIcon ?? dayIcon) };
 }
+
+export type WeatherCategory = "clear" | "cloudy" | "fog" | "rain" | "snow" | "storm";
+
+export function weatherCategory(code: number): WeatherCategory {
+  if (code <= 1) return "clear";
+  if (code <= 3) return "cloudy";
+  if (code === 45 || code === 48) return "fog";
+  if ((code >= 71 && code <= 77) || code === 85 || code === 86) return "snow";
+  if (code >= 95) return "storm";
+  return "rain"; // drizzle, rain, freezing rain, showers
+}
+
+// WHO UV index categories.
+export function uvLevel(uv: number) {
+  if (uv < 3) return "Low";
+  if (uv < 6) return "Moderate";
+  if (uv < 8) return "High";
+  if (uv < 11) return "Very high";
+  return "Extreme";
+}
