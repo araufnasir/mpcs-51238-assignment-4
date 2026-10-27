@@ -1,13 +1,11 @@
 import type { CityForecast } from "@/lib/open-meteo";
 import { recommend } from "@/lib/recommendations";
-import { formatTemp, formatWind, type Unit } from "@/lib/units";
 import { describeWeather, uvLevel } from "@/lib/weather-codes";
 import { Advice } from "./Advice";
 import { DeleteCityButton } from "./DeleteCityButton";
+import { Temp, Wind } from "./Units";
 
-const unit: Unit = "C"; // replaced by the °C/°F toggle in a later step
-
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
       <dt className="text-xs text-zinc-500">{label}</dt>
@@ -39,15 +37,15 @@ export function CityCard({ id, name, weather }: { id: string; name: string; weat
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-lg font-semibold">{name}</h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            {conditions.label} · Feels like {formatTemp(current.feelsLike, unit)}
+            {conditions.label} · Feels like <Temp c={current.feelsLike} />
           </p>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            H {formatTemp(today.high, unit)} · L {formatTemp(today.low, unit)}
+            H <Temp c={today.high} /> · L <Temp c={today.low} />
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-4xl" aria-hidden>{conditions.icon}</span>
-          <span className="text-4xl font-semibold tabular-nums">{formatTemp(current.temperature, unit)}</span>
+          <span className="text-4xl font-semibold tabular-nums"><Temp c={current.temperature} /></span>
         </div>
       </div>
 
@@ -55,7 +53,16 @@ export function CityCard({ id, name, weather }: { id: string; name: string; weat
         <Stat label="Rain today" value={`${today.rainChance}%`} />
         <Stat
           label="Wind"
-          value={formatWind(current.windSpeed, unit) + (gusty ? `, gusts ${formatWind(current.windGusts, unit)}` : "")}
+          value={
+            <>
+              <Wind kmh={current.windSpeed} />
+              {gusty && (
+                <>
+                  , gusts <Wind kmh={current.windGusts} />
+                </>
+              )}
+            </>
+          }
         />
         <Stat label="UV today" value={`${Math.round(today.uvMax)} ${uvLevel(today.uvMax)}`} />
       </dl>

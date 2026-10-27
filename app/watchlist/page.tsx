@@ -4,6 +4,7 @@ import { CityCard } from "@/components/CityCard";
 import { DailyBrief } from "@/components/DailyBrief";
 import { RetryButton } from "@/components/RetryButton";
 import { StateMessage } from "@/components/StateMessage";
+import { UnitToggle } from "@/components/Units";
 import { primaryButton } from "@/components/buttons";
 import { getForecasts, type CityForecast } from "@/lib/open-meteo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -67,9 +68,12 @@ export default async function WatchlistPage() {
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Your watchlist</h1>
-        <Link href="/search" className="text-sm font-medium text-sky-600 hover:underline dark:text-sky-400">
-          + Add city
-        </Link>
+        <div className="flex items-center gap-3">
+          <UnitToggle />
+          <Link href="/search" className="text-sm font-medium text-sky-600 hover:underline dark:text-sky-400">
+            + Add city
+          </Link>
+        </div>
       </div>
       {content}
     </main>
