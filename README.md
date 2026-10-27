@@ -48,7 +48,7 @@ sequenceDiagram
     S->>C: auth.protect(), getToken()
     C-->>S: session JWT (sub = user_…)
     S->>DB: insert {name, lat, lon} with the JWT
-    DB->>DB: user_id := jwt.sub; RLS with check; constraints; 50-city trigger
+    DB->>DB: user_id := jwt.sub, RLS with check, constraints, 50-city trigger
     DB-->>S: ok
     S-->>U: "✓ Saved" (page refreshed)
     Note over U,OM: Later, on /watchlist
