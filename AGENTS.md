@@ -21,7 +21,10 @@ One table, `public.saved_cities`, one row per city a user has saved to their wat
 | `longitude`  | `double precision` | not null                                                   |
 | `created_at` | `timestamptz`    | not null, `default now()`                                    |
 
-Constraint: `unique (user_id, latitude, longitude)` so a user can't save the same city twice.
+Constraints:
+- `unique (user_id, latitude, longitude)` so a user can't save the same city twice.
+- `check` constraints: `name` 1–200 characters, `latitude` −90..90, `longitude` −180..180.
+- A `before insert` trigger caps each user at 50 saved cities (raises `saved_cities_limit`).
 
 Current conditions are **not** stored — they are fetched from Open-Meteo at view time using the saved coordinates.
 
