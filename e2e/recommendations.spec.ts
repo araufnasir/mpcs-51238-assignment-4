@@ -32,7 +32,7 @@ test("clear hot day: light clothes, sun protection, swim and an early/late picni
   expect(outdoorScore(sunnyHot)).toBe(63);
 });
 
-test("cold rain: warm jacket and umbrella, mostly indoor ideas", () => {
+test("raining now: warm jacket and umbrella, walk between showers, mostly indoor ideas", () => {
   expect(recommend(coldRain)).toEqual({
     wear: "Warm jacket",
     bring: ["Umbrella"],
@@ -63,6 +63,21 @@ test("mild but windy: windproof layer, hooded jacket instead of umbrella, kite n
   });
   // 100 - 18 - 15 - 37.5 = 29.5 → 30
   expect(outdoorScore(mildWindy)).toBe(30);
+});
+
+test("dry now, showers later: go out early, still bring an umbrella", () => {
+  const dryNowShowersLater: WeatherInput = {
+    current: { feelsLike: 16, weatherCode: 0, isDay: true },
+    today: { high: 24, low: 15, rainChance: 68, uvMax: 8, windMax: 18 },
+  };
+  expect(recommend(dryNowShowersLater)).toEqual({
+    wear: "Long sleeves",
+    bring: ["Umbrella", "Sunscreen", "Sunglasses", "Hat"],
+    outdoor: ["Get outside now, before the showers"],
+    indoor: ["Café or bookstore", "Cinema"],
+  });
+  // 100 - 0.6*68 - 3*|24-21| - 0 (wind) - 10 (UV 8) = 40.2 → 40
+  expect(outdoorScore(dryNowShowersLater)).toBe(40);
 });
 
 test("thunderstorm: no outdoor ideas", () => {

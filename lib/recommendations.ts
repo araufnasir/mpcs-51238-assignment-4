@@ -38,7 +38,8 @@ export function recommend({ current, today }: WeatherInput): Recommendation {
   const category = weatherCategory(current.weatherCode);
   const snowy = category === "snow";
   const stormy = category === "storm";
-  const rainy = !snowy && (category === "rain" || stormy || today.rainChance >= LIKELY_RAIN);
+  const rainingNow = category === "rain" || stormy;
+  const rainy = !snowy && (rainingNow || today.rainChance >= LIKELY_RAIN);
   const windy = today.windMax >= WINDY;
   const tooWindyForUmbrella = today.windMax >= TOO_WINDY_FOR_UMBRELLA;
   const feels = current.feelsLike;
@@ -72,7 +73,8 @@ export function recommend({ current, today }: WeatherInput): Recommendation {
     outdoor = ["Build a snowman or go sledding", "Winter walk"];
     indoor = ["Café with a hot drink"];
   } else if (rainy) {
-    outdoor = ["Short walk between showers"];
+    // Dry right now but showers likely later: go out early rather than "between showers".
+    outdoor = [rainingNow ? "Short walk between showers" : "Get outside now, before the showers"];
     indoor = ["Café or bookstore", "Cinema"];
   } else if (feels >= 24) {
     outdoor = ["Swim or beach", today.uvMax >= HIGH_UV ? "Picnic early or late (strong midday sun)" : "Picnic in the park"];
