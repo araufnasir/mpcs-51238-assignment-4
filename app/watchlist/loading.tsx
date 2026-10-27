@@ -4,7 +4,7 @@ export default function Loading() {
       <div className="mb-6 h-8 w-48 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
       <ul className="space-y-3">
         {[0, 1, 2].map((i) => (
-          <li key={i} className="h-[74px] animate-pulse rounded-xl bg-zinc-100 dark:bg-zinc-800" />
+          <li key={i} className="h-64 animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-800" />
         ))}
       </ul>
     </main>
