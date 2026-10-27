@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { CityCard } from "@/components/CityCard";
+import { DailyBrief } from "@/components/DailyBrief";
 import { RetryButton } from "@/components/RetryButton";
 import { StateMessage } from "@/components/StateMessage";
 import { primaryButton } from "@/components/buttons";
@@ -49,6 +50,9 @@ export default async function WatchlistPage() {
           <StateMessage tone="error" icon="🌩️" title="Weather service is down" action={<RetryButton />}>
             We couldn&apos;t reach Open-Meteo for current conditions. Your saved cities are safe.
           </StateMessage>
+        )}
+        {weather && (
+          <DailyBrief cities={cities.map((city, i) => ({ id: city.id, name: city.name, weather: weather[i] }))} />
         )}
         <ul className="space-y-3">
           {cities.map((city, i) => (
