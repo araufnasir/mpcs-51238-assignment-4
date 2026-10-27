@@ -1,12 +1,9 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-// Signed-out visitors to these routes are sent to /sign-in. Each page,
-// route handler and server action also calls auth.protect() itself.
-const isProtectedRoute = createRouteMatcher(["/watchlist(.*)", "/search(.*)", "/api(.*)"]);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect();
-});
+// Makes the Clerk session available to server code. Access control is not
+// done here: every page, route handler and server action that touches data
+// calls auth.protect() itself (Clerk's recommended resource-based checks).
+export default clerkMiddleware();
 
 export const config = {
   matcher: [
