@@ -4,7 +4,7 @@ import { CityCard } from "@/components/CityCard";
 import { RetryButton } from "@/components/RetryButton";
 import { StateMessage } from "@/components/StateMessage";
 import { primaryButton } from "@/components/buttons";
-import { getCurrentWeather, type CurrentWeather } from "@/lib/open-meteo";
+import { getForecasts, type CityForecast } from "@/lib/open-meteo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function WatchlistPage() {
@@ -36,9 +36,9 @@ export default async function WatchlistPage() {
       </StateMessage>
     );
   } else {
-    let weather: CurrentWeather[] | null = null;
+    let weather: CityForecast[] | null = null;
     try {
-      weather = await getCurrentWeather(cities.map(({ latitude, longitude }) => ({ latitude, longitude })));
+      weather = await getForecasts(cities.map(({ latitude, longitude }) => ({ latitude, longitude })));
     } catch {
       // Shown below as the API-down state; saved cities still render and can be removed.
     }
