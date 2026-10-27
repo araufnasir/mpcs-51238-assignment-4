@@ -19,7 +19,7 @@ export function CityCard({ id, name, weather }: { id: string; name: string; weat
     return (
       <li className="flex items-center gap-4 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800">
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-lg font-semibold">{name}</h2>
+          <h2 className="text-lg font-semibold leading-snug break-words">{name}</h2>
           <p className="text-sm text-zinc-500">Weather unavailable</p>
         </div>
         <DeleteCityButton id={id} name={name} />
@@ -35,7 +35,7 @@ export function CityCard({ id, name, weather }: { id: string; name: string; weat
     <li className="space-y-3 rounded-2xl border border-zinc-200 p-4 dark:border-zinc-800">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-lg font-semibold">{name}</h2>
+          <h2 className="text-lg font-semibold leading-snug break-words">{name}</h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             {conditions.label} · Feels like <Temp c={current.feelsLike} />
           </p>
