@@ -1,6 +1,12 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+// Signed-out visitors to these routes are sent to /sign-in. Each page,
+// route handler and server action also calls auth.protect() itself.
+const isProtectedRoute = createRouteMatcher(["/watchlist(.*)", "/search(.*)", "/api(.*)"]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) await auth.protect();
+});
 
 export const config = {
   matcher: [
