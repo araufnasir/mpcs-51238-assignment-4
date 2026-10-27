@@ -25,6 +25,7 @@ export async function saveCity(city: { name: string; latitude: number; longitude
   const { error } = await supabase.from("saved_cities").insert({ name, latitude, longitude });
 
   if (error?.code === "23505") return { ok: true }; // already in the list
+  if (error?.message === "saved_cities_limit") return { ok: false, error: "You can save up to 50 cities." };
   if (error) return { ok: false, error: "Couldn't save that city. Please try again." };
 
   refresh();

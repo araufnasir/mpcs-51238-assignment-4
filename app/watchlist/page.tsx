@@ -15,7 +15,8 @@ export default async function WatchlistPage() {
   const { data: cities, error } = await supabase
     .from("saved_cities")
     .select("id, name, latitude, longitude")
-    .order("created_at");
+    .order("created_at")
+    .limit(50); // matches the per-user cap enforced in the database
 
   let content;
   if (error) {
