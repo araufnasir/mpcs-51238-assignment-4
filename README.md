@@ -66,6 +66,26 @@ All Open-Meteo calls run **on the server**: search goes through `app/api/geocode
 - **One place for the API-down state.** Every call has a 5-second timeout and checks the HTTP status. Any failure turns into one clear "service down" message with a Retry button. Failures are never cached, so Retry really tries again.
 - **No key, but errors still handled.** Open-Meteo needs no API key, so this isn't about hiding a secret. It's about consistent error handling and caching. The response quirks are handled in one place: no matches come back as `200` with no `results` key, and one location returns an object while several return an array.
 
+## Recommendations
+
+Each city card has **Wear / Bring / Ideas**, and the top of `/watchlist` has a **Today's brief**: one line per city on what to wear, plus the best saved city for outdoor plans today. They come from rules only, in [`lib/recommendations.ts`](lib/recommendations.ts): pure functions with no AI model, no new tables and no user data. The inputs are the public forecast: feels-like, conditions, day or night, today's high and low, rain chance, wind and UV.
+
+- **Wear** follows feels-like temperature: from "Heavy coat, hat, gloves and scarf" (≤ −10 °C) to "Light, breathable clothes" (> 26 °C), plus boots in snow.
+- **Bring:**
+  - An umbrella if rain chance is ≥ 60% or it's raining. A hooded jacket instead if wind is ≥ 40 km/h.
+  - A compact umbrella at 30–59%.
+  - A windproof layer at ≥ 30 km/h.
+  - Sunscreen at UV ≥ 3, plus sunglasses and a hat at UV ≥ 6.
+  - An extra layer if the day spans 10 °C or more.
+- **Ideas:** 2–3 outdoor and indoor picks.
+  - Storms remove outdoor ideas, and nights switch to evening ideas.
+  - If it's raining now, the idea is a walk between showers. If it's dry now but showers are likely later, it's "Get outside now, before the showers".
+- **Best for outdoor plans:** a 0–100 score that starts at 100 and loses points for rain chance, distance of today's high from 21 °C, wind above 20 km/h, storms and very high UV. Below 40 everywhere, the brief suggests an indoor day.
+
+The rules work in metric and their text contains no numbers. The **°F (default) / °C toggle** therefore converts only for display, in the browser, and is remembered in `localStorage`. Forecasts stay cached by coordinates alone, never by user or unit.
+
+`e2e/recommendations.spec.ts` checks hand-computed examples (hot sunny day, raining now, snowy night, mild but windy, dry now with showers later, thunderstorm, best city) without signing in: `npx playwright test e2e/recommendations.spec.ts`.
+
 ## Access control
 
 - **Who you are: Clerk.** On the server, `auth()` / `auth.protect()` from `@clerk/nextjs/server` reads the Clerk session. Every page, route handler and server action that touches data calls `auth.protect()`. Signed-out visitors are sent to sign-in (pages) or get a 404 (API and actions). The home and sign-in/up pages show no data.
